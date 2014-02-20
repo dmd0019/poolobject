@@ -8,10 +8,12 @@ import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
+import ubu.gii.dass.c01.NotFreeInstanceException;
+import ubu.gii.dass.c01.Reusable;
 import ubu.gii.dass.c01.ReusablePool;
 
 public class ReusablePoolTest {
-	
+
 	private static ReusablePool rp;
 
 	@BeforeClass
@@ -21,12 +23,20 @@ public class ReusablePoolTest {
 
 	@Test
 	public void testGetInstance() {
-		assertEquals(ReusablePool.getInstance().hashCode(),  ReusablePool.getInstance().hashCode());
+		assertEquals("Test Singleton getInstance().", ReusablePool
+				.getInstance().hashCode(), ReusablePool.getInstance()
+				.hashCode());
 	}
 
-	@Test
-	public void testAcquireReusable() {
-		fail("Not yet implemented");
+	@Test(expected = NotFreeInstanceException.class)
+	public void testAcquireReusable() throws NotFreeInstanceException {
+		int counter = 0;
+
+		do {
+			counter++;
+			assertEquals("Test acquireReusable(): " + counter + "ª llamada.",
+					rp.acquireReusable().getClass(), Reusable.class);
+		} while (counter < 3);
 	}
 
 	@Test
