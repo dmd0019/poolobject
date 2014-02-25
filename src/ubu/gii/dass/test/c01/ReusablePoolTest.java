@@ -8,6 +8,8 @@ import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
+import com.sun.xml.internal.ws.policy.AssertionValidationProcessor;
+
 import ubu.gii.dass.c01.NotFreeInstanceException;
 import ubu.gii.dass.c01.Reusable;
 import ubu.gii.dass.c01.ReusablePool;
@@ -23,15 +25,18 @@ public class ReusablePoolTest {
 
 	@Test
 	public void testGetInstance() {
-		assertEquals("Test Singleton getInstance().", ReusablePool
-				.getInstance().hashCode(), ReusablePool.getInstance()
-				.hashCode());
+		assertEquals(
+				"Test getInstance(). Objeto obtenido no es de tipo ReusablePool",
+				ReusablePool.class, ReusablePool.getInstance().getClass());
+		assertEquals(
+				"Test Singleton getInstance(). Instancias obtenidas no son del mismo objeto",
+				ReusablePool.getInstance().hashCode(), ReusablePool
+						.getInstance().hashCode());
 	}
 
 	@Test(expected = NotFreeInstanceException.class)
 	public void testAcquireReusable() throws NotFreeInstanceException {
 		int counter = 0;
-
 		do {
 			counter++;
 			assertEquals("Test acquireReusable(): " + counter + "ª llamada.",
@@ -41,6 +46,12 @@ public class ReusablePoolTest {
 
 	@Test
 	public void testReleaseReusable() {
-		fail("Not yet implemented");
+		try {
+			Reusable reusable = rp.acquireReusable();
+			rp.releaseReusable(reusable);
+			rp.releaseReusable(reusable);
+		} catch (NotFreeInstanceException e) {
+			e.printStackTrace();
+		}
 	}
 }
